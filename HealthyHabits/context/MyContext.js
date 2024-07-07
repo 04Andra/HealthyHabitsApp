@@ -2,5 +2,13 @@ import {createContext} from "react";
 
 export const MyContext = createContext({
     isLogged: false,
-    setIsLogged: () => {}
+    setIsLogged: () => {},
+    exerciseList: [],
+    setExerciseList: () => {},
+    selectedDropdownType: {},
+    setSelectedDropdownType: () => {},
+    selectedDropdownMuscle: {},
+    setSelectedDropdownMuscle: () => {},
+    selectedDropdownDifficulty: {},
+    setSelectedDropdownDifficulty: () => {},
 })

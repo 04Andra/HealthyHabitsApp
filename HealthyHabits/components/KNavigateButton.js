@@ -8,6 +8,8 @@ export default function KNavigateButton({text, screenName = null, action = () =>
         <TouchableOpacity style={KButtonStyles.container} onPress={() => {
             if (screenName !== null) {
                 navigate(screenName)
+            } else {
+                goBack()
             }
             action()
         }}>

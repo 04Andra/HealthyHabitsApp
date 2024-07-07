@@ -1,10 +1,12 @@
 import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {Colors, Typographies} from "../constants/Theming";
+import {useNavigation} from "@react-navigation/native";
 
-export default function KTextButton({text, action, navigation, screenName}) {
+export default function KTextButton({text, screenName = null}) {
+    const {navigate} = useNavigation()
     return (
         <TouchableOpacity onPress={() => {
-            navigation.navigate(screenName)
+            navigate(screenName)
         }}>
             <Text style={[KTextButtonStyles.textStyle, Typographies.normal_text]}>{text}</Text>
         </TouchableOpacity>

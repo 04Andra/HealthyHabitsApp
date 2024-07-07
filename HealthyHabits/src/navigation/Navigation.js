@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {auth} from "../../firebase/config";
 import {onAuthStateChanged} from "firebase/auth";
 import {NavigationContainer} from "@react-navigation/native";
+import {MyContext} from "../../context/MyContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,10 @@ const AuthStack = () => {
 
 const Navigation = () => {
     const [isLogged, setIsLogged] = useState(false);
+    const [exerciseList, setExerciseList] = useState([]);
+    const [selectedDropdownType, setSelectedDropdownType] = useState([]);
+    const [selectedDropdownMuscle, setSelectedDropdownMuscle] = useState([]);
+    const [selectedDropdownDifficulty, setSelectedDropdownDifficulty] = useState([]);
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -43,9 +48,16 @@ const Navigation = () => {
     }, []);
 
     return (
-        <NavigationContainer>
-            {isLogged ? <AppStack/> : <AuthStack/>}
-        </NavigationContainer>
+        <MyContext.Provider value={{
+            exerciseList, setExerciseList,
+            selectedDropdownType, setSelectedDropdownType,
+            selectedDropdownMuscle, setSelectedDropdownMuscle,
+            selectedDropdownDifficulty, setSelectedDropdownDifficulty
+        }}>
+            <NavigationContainer>
+                {isLogged ? <AppStack/> : <AuthStack/>}
+            </NavigationContainer>
+        </MyContext.Provider>
     );
 };
 
