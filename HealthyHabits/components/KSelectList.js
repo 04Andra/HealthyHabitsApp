@@ -13,11 +13,11 @@ export default function KSelectList({list, iconName, text}) {
 
     const onSelectItem = (selected) => {
         if (text === 'Choose a type') {
-            setSelectedDropdownType(selected)
-        } else if (text === 'Choose a muscle?') {
-            setSelectedDropdownMuscle(selected)
-        } else if (text === 'Choose a difficulty') {
-            setSelectedDropdownDifficulty(selected)
+            setSelectedDropdownType(selected);
+        } else if (text === 'Choose a muscle') {
+            setSelectedDropdownMuscle(selected);
+        } else if (text === 'Choose difficulty') {
+            setSelectedDropdownDifficulty(selected);
         }
     }
 

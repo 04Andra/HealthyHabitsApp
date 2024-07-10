@@ -5,6 +5,7 @@ import {MyContext} from "../../context/MyContext";
 import {useContext, useEffect, useState} from "react";
 import KSelectList from "../../components/KSelectList";
 import KNavigateButton from "../../components/KNavigateButton";
+import KGoBackButton from "../../components/KGoBackButton";
 
 export default function FilterScreen({navigation}) {
 
@@ -16,22 +17,6 @@ export default function FilterScreen({navigation}) {
     const {selectedDropdownType, setSelectedDropdownType} = useContext(MyContext);
     const {selectedDropdownMuscle, setSelectedDropdownMuscle} = useContext(MyContext);
     const {selectedDropdownDifficulty, setSelectedDropdownDifficulty} = useContext(MyContext);
-    const [counter, setCounter] = useState(0);
-
-    const verifyExercise = () => {
-        if (selectedDropdownType !== null) {
-            setCounter(counter + 1)
-        }
-        if (selectedDropdownMuscle !== null) {
-            setCounter(counter + 1)
-        }
-        if (selectedDropdownDifficulty !== null) {
-            setCounter(counter + 1)
-        }
-        if (counter < 1) {
-            alert('You need to choose at least one filter!')
-        }
-    }
 
     useEffect(() => {
         const loadExercises = async () => {
@@ -45,7 +30,19 @@ export default function FilterScreen({navigation}) {
             setDifficultyList(uniqueDifficulty);
         };
         loadExercises().then();
+
+        setSelectedDropdownType(null);
+        setSelectedDropdownMuscle(null);
+        setSelectedDropdownDifficulty(null);
     }, []);
+
+    const verifyExercise = () => {
+        if (selectedDropdownType !== null || selectedDropdownMuscle !== null || selectedDropdownDifficulty !== null) {
+            navigation.navigate('DoExerciseScreen');
+        } else {
+            alert('You need to choose at least one filter!')
+        }
+    }
 
     return (
         <ImageBackground source={backgroundImage} resizeMode={'cover'} style={filterStyles.imageView}>
@@ -59,10 +56,10 @@ export default function FilterScreen({navigation}) {
             </View>
             <View style={filterStyles.buttonsContainer}>
                 <View style={{flex: 1, alignItems: 'flex-start', paddingLeft: 30}}>
-                    <KNavigateButton text={'BACK'}/>
+                    <KGoBackButton text={'BACK'}/>
                 </View>
                 <View style={{flex: 1, alignItems: 'flex-end', paddingRight: 30}}>
-                    <KNavigateButton text={'NEXT'} screenName={'DoExercise'} action={verifyExercise}/>
+                    <KNavigateButton text={'NEXT'} action={verifyExercise}/>
                 </View>
             </View>
         </ImageBackground>
