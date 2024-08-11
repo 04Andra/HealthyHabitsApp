@@ -3,31 +3,35 @@ import {
     StyleSheet,
     View,
     Text,
-    ScrollView,
-    Modal,
-    Alert,
-    TouchableOpacity
+    ScrollView
 } from "react-native";
 import {Colors, Typographies} from "../../constants/Theming";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import {useContext, useEffect, useState} from "react";
 import {MyContext} from "../../context/MyContext";
 import KSpacer from "../../components/KSpacer";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import KModal from "../../components/KModal";
+import KGoBackButton from "../../components/KGoBackButton";
+import KNavigateButton from "../../components/KNavigateButton";
+import navigation from "../navigation/Navigation";
 
-export default function DoExerciseScreen() {
+export default function DoExerciseScreen({navigation}) {
 
     const backgroundImage = require('../../assets/images/doExercice.png');
+
     const {exerciseList, setExerciseList} = useContext(MyContext);
     const {selectedDropdownType, setSelectedDropdownType} = useContext(MyContext);
     const {selectedDropdownMuscle, setSelectedDropdownMuscle} = useContext(MyContext);
     const {selectedDropdownDifficulty, setSelectedDropdownDifficulty} = useContext(MyContext);
     const [nameList, setNameList] = useState([]);
-    const [counter, setCounter] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState({});
     const [exerciseText, setExerciseText] = useState('');
+    const [onComplete, setOnComplete] = useState(false);
+    const [countdownIcon, setCountdownIcon] = useState('pause');
+    const [countdownState, setCountdownState] = useState(true);
+    const [counter, setCounter] = useState(1);
 
     useEffect(() => {
         const filteredList = exerciseList.filter(item => (
@@ -42,8 +46,6 @@ export default function DoExerciseScreen() {
     }, [selectedDropdownType, selectedDropdownMuscle, selectedDropdownDifficulty]);
 
     const handleCheckboxPress = (checked, item) => {
-        setIsChecked(prevState => ({ ...prevState, [item]: checked }));
-
         if (checked) {
             setSelectedItem(item);
             const exercise = exerciseList.find(exercise => exercise.name === item);
@@ -51,37 +53,34 @@ export default function DoExerciseScreen() {
                 setExerciseText(exercise.instructions);
             }
             setModalVisible(true);
+            setCounter(counter + 1)
+            console.log(counter)
         } else {
             setSelectedItem('');
             setExerciseText('');
         }
     };
 
+    const verifyExercises = () => {
+        // if (counter === 5) {
+        //     navigation.navigate('ProfileScreen')
+        // } else {
+        //     alert('You need to complete all the exercises')
+        // }
+    }
+
     return (
         <ImageBackground source={backgroundImage} resizeMode={'cover'} style={doExerciseStyle.imageView}>
             <View style={doExerciseStyle.titleContainer}>
                 <Text style={[doExerciseStyle.titleStyle, Typographies.title_text]}>You can do it!</Text>
             </View>
-            <View style={{flex: 1, width: '100%'}}>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <View style={doExerciseStyle.centeredView}>
-                        <View style={doExerciseStyle.modalView}>
-                            <TouchableOpacity onPress={() => {
-                                setModalVisible(!modalVisible)
-                            }}>
-                                <MaterialIcons name={'keyboard-arrow-down'} size={50} color={Colors.dark_blue}/>
-                            </TouchableOpacity>
-                            <Text style={[doExerciseStyle.modalText, Typographies.normal_text]}>{exerciseText}</Text>
-                        </View>
-                    </View>
-                </Modal>
+            <View style={{width: '100%'}}>
+                <KModal setModalVisible={setModalVisible} exerciseText={exerciseText} modalVisible={modalVisible}
+                        setCountdownIcon={setCountdownIcon} setOnComplete={setOnComplete}
+                        setCountdownState={setCountdownState} countdownState={countdownState}
+                        countdownIcon={countdownIcon} setIsChecked={setIsChecked} onComplete={onComplete}
+                        selectedItem={selectedItem}
+                        isChecked={isChecked}/>
                 <ScrollView>
                     {
                         nameList.map((item, index) => {
@@ -92,22 +91,34 @@ export default function DoExerciseScreen() {
                                             size={25}
                                             fillColor={Colors.dark_blue}
                                             unFillColor="#FFFFFF"
+                                            isChecked={isChecked[item.name] || false}
                                             text={item}
                                             innerIconStyle={{borderWidth: 2, borderColor: 'transparent'}}
                                             textStyle={[{color: Colors.dark_blue}, Typographies.normal_text]}
-                                            onPress={(checked) => handleCheckboxPress(checked, item)}
+                                            onPress={(checked) => {
+                                                handleCheckboxPress(checked, item)
+                                            }}
                                             iconStyle={{marginRight: 10}}
-                                            style={{flexDirection: 'row-reverse'}}
+                                            style={{
+                                                flexDirection: 'row-reverse'
+                                            }}
                                         />
                                     </View>
-                                    <KSpacer height={5}/>
+                                    <KSpacer height={8}/>
                                 </View>
                             )
                         })
                     }
                 </ScrollView>
             </View>
-            <View style={doExerciseStyle.buttonsContainer}></View>
+            <View style={doExerciseStyle.buttonsContainer}>
+                <View style={doExerciseStyle.buttonBackStyle}>
+                    <KGoBackButton text={'BACK'}/>
+                </View>
+                <View style={doExerciseStyle.buttonNextStyle}>
+                    <KNavigateButton text={'PROFILE'} action={verifyExercises} screenName={'ProfileScreen'}/>
+                </View>
+            </View>
         </ImageBackground>
     )
 }
@@ -133,25 +144,7 @@ const doExerciseStyle = StyleSheet.create({
         height: 50,
         backgroundColor: Colors.middle_blue,
         justifyContent: 'center',
-        borderRadius: 5
-    },
-    buttonsContainer: {
-        flex: 1
-    },
-
-
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 22,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: Colors.white,
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
+        borderRadius: 5,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -161,24 +154,19 @@ const doExerciseStyle = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
     },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'flex-end',
     },
-    buttonOpen: {
-        backgroundColor: '#F194FF',
+    buttonBackStyle: {
+        alignItems: 'flex-start',
+        width: '50%',
+        padding: 30
     },
-    buttonClose: {
-        backgroundColor: '#2196F3',
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    modalText: {
-        color: Colors.dark_blue,
-        textAlign: 'center'
-    },
+    buttonNextStyle: {
+        alignItems: 'flex-end',
+        width: '50%',
+        padding: 30
+    }
 })

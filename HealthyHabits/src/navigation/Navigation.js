@@ -9,6 +9,7 @@ import {onAuthStateChanged} from "firebase/auth";
 import {NavigationContainer} from "@react-navigation/native";
 import {MyContext} from "../../context/MyContext";
 import DoExerciseScreen from "../screens/DoExerciseScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ const AppStack = () => {
         <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="FilterScreen" component={FilterScreen}/>
             <Stack.Screen name="DoExerciseScreen" component={DoExerciseScreen}/>
+            <Stack.Screen name="ProfileScreen" component={ProfileScreen}/>
         </Stack.Navigator>
     );
 };

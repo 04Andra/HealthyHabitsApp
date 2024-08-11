@@ -14,5 +14,9 @@ export const Typographies = {
     normal_text: {
         fontSize: 16,
         fontFamily: 'my_font'
+    },
+    countdown_text: {
+        fontSize: 24,
+        fontFamily: 'my_font'
     }
 }
