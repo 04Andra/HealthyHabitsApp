@@ -38,7 +38,7 @@ export default function KModal({
                     }
                     <CountdownCircleTimer
                         isPlaying={countdownState}
-                        duration={5}
+                        duration={3}
                         colors={[Colors.dark_blue, Colors.middle_blue, Colors.light_blue]}
                         colorsTime={[200, 100, 10]}
                         style={KModalStyle.timerStyle}

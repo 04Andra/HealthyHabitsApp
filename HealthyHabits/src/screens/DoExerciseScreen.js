@@ -13,7 +13,9 @@ import KSpacer from "../../components/KSpacer";
 import KModal from "../../components/KModal";
 import KGoBackButton from "../../components/KGoBackButton";
 import KNavigateButton from "../../components/KNavigateButton";
-import navigation from "../navigation/Navigation";
+import {fetchDataAddProfile, fetchDataGetProfile} from "../../firebase/fetchDataUser";
+import {ref, onValue} from "firebase/database";
+import {database} from "../../firebase/config";
 
 export default function DoExerciseScreen({navigation}) {
 
@@ -31,7 +33,7 @@ export default function DoExerciseScreen({navigation}) {
     const [onComplete, setOnComplete] = useState(false);
     const [countdownIcon, setCountdownIcon] = useState('pause');
     const [countdownState, setCountdownState] = useState(true);
-    const [counter, setCounter] = useState(1);
+    const [counter, setCounter] = useState(0);
 
     useEffect(() => {
         const filteredList = exerciseList.filter(item => (
@@ -54,7 +56,6 @@ export default function DoExerciseScreen({navigation}) {
             }
             setModalVisible(true);
             setCounter(counter + 1)
-            console.log(counter)
         } else {
             setSelectedItem('');
             setExerciseText('');
@@ -62,11 +63,20 @@ export default function DoExerciseScreen({navigation}) {
     };
 
     const verifyExercises = () => {
-        // if (counter === 5) {
-        //     navigation.navigate('ProfileScreen')
-        // } else {
-        //     alert('You need to complete all the exercises')
-        // }
+        navigation.navigate('ProfileScreen')
+        if (counter === nameList.length) {
+            fetchDataGetProfile().then(item => {
+                if (item.days < 7) {
+                    const updatedDays = item.days + 1;
+                    fetchDataAddProfile(updatedDays, 'recipe')
+                } else {
+                    fetchDataAddProfile(1, 'recipe')
+                }
+                console.log(item)
+            })
+        } else {
+            alert('You need to complete all the exercises')
+        }
     }
 
     return (
@@ -116,7 +126,7 @@ export default function DoExerciseScreen({navigation}) {
                     <KGoBackButton text={'BACK'}/>
                 </View>
                 <View style={doExerciseStyle.buttonNextStyle}>
-                    <KNavigateButton text={'PROFILE'} action={verifyExercises} screenName={'ProfileScreen'}/>
+                    <KNavigateButton text={'PROFILE'} action={verifyExercises}/>
                 </View>
             </View>
         </ImageBackground>

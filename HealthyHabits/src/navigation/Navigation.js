@@ -42,7 +42,6 @@ const Navigation = () => {
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-
             if (user) {
                 setIsLogged(true)
             } else {
